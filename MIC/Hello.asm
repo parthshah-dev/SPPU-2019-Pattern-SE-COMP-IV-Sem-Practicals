@@ -1,3 +1,5 @@
+;Program to print "Hello, World!"
+
 section .data
 	message db 'Hello, World!', 10
 	msg_len equ $ - message
