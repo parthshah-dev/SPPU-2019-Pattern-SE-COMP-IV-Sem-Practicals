@@ -5,7 +5,7 @@ section .data
 	msg_len equ $ - message
 	
 section .text
-global _start
+	global _start
 _start:
 	mov eax, 4
 	mov ebx, 1
