@@ -1,7 +1,7 @@
 #include<iostream>
 using namespace std;
 
-struct Node{    
+struct Node {    
     int data;
     Node* left;
     Node* right;
@@ -14,7 +14,7 @@ class BST {
         Node* root;
 
     public:
-        BST(){        
+        BST() {        
             root = NULL;
         }
         
@@ -95,6 +95,45 @@ class BST {
             cout << node->data << " ";
             inOrderTraversal(node->right);
         }
+
+        int findHeight(Node* node) {
+            if (node == NULL) return 0;
+            int leftHeight = findHeight(node->left);
+            int rightHeight = findHeight(node->right);
+            return max(leftHeight, rightHeight) + 1;
+        }
+
+        void displayHeight() {
+            cout << "Height of the tree: " << findHeight(root) << endl;
+        }
+
+        int findMin(Node* node) {
+            if (node == NULL) return -1;
+            while (node->left != NULL) {
+                node = node->left;
+            }
+            return node->data;
+        }
+
+        void displayMinValue() {
+            if (root == NULL) {
+                cout << "Binary Search Tree is empty." << endl;
+                return;
+            }
+            cout << "Minimum data value in the tree: " << findMin(root) << endl;
+        }
+
+        void mirrorTree(Node* node) {
+            if (node == NULL) return;
+            swap(node->left, node->right);
+            mirrorTree(node->left);
+            mirrorTree(node->right);
+        }
+
+        void mirror() {
+            mirrorTree(root);
+            cout << "Tree structure has been mirrored!" << endl;
+        }
 };
 
 int main() {
@@ -107,7 +146,10 @@ int main() {
         cout << "2. Insert node\n";
         cout << "3. Search for an element\n";
         cout << "4. Display tree (In-order traversal)\n";
-        cout << "5. Exit\n";
+        cout << "5. Find Number of Nodes in Longest Path (Tree Height)\n";
+        cout << "6. Find Minimum Data Value in the Tree\n";
+        cout << "7. Mirror the Tree Structure\n";
+        cout << "8. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -129,6 +171,15 @@ int main() {
                 obj.displayTree();
                 break;
             case 5:
+                obj.displayHeight();
+                break;
+            case 6:
+                obj.displayMinValue();
+                break;
+            case 7:
+                obj.mirror();
+                break;
+            case 8:
                 cout << "Exiting program...\n";
                 return 0;
             default:
