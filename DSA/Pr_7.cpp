@@ -50,10 +50,10 @@ void ExpressionTree::buildTreeFromPrefix(char prefixExpr[]) {
         node->left = node->right = nullptr;
         node->data = prefixExpr[i];
         
-        if (isalpha(prefixExpr[i])) { // If operand
+        if (isalpha(prefixExpr[i])) { 
             st.push(node);
             cout << "Inserted operand node: " << prefixExpr[i] << endl;
-        } else if (prefixExpr[i] == '+' || prefixExpr[i] == '-' || prefixExpr[i] == '*' || prefixExpr[i] == '/') { // If operator
+        } else if (prefixExpr[i] == '+' || prefixExpr[i] == '-' || prefixExpr[i] == '*' || prefixExpr[i] == '/') { 
             if (!st.isEmpty()) node->left = st.pop();
             if (!st.isEmpty()) node->right = st.pop();
             st.push(node);
@@ -79,7 +79,7 @@ void ExpressionTree::postOrderTraversal(Node *node) {
         st2.push(currNode);
         
         if (currNode->left) st1.push(currNode->left);
-        if (currNode->right) st1.push(currNode->right);  // Fix: was checking left twice
+        if (currNode->right) st1.push(currNode->right);
     }
 
     while (!st2.isEmpty()) {
