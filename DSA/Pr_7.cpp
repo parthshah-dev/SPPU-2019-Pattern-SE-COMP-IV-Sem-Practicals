@@ -100,16 +100,50 @@ void ExpressionTree::deleteTree(Node *node) {
 
 int main() {
     char prefixExpression[20];
-
+    int choice;
     ExpressionTree expressionTree;
 
-    cout << "Enter Prefix Expression: ";
-    cin >> prefixExpression;
+    do {
+        cout << "\n--- Menu ---\n";
+        cout << "1. Build Expression Tree from Prefix Expression\n";
+        cout << "2. Perform Post-Order Traversal\n";
+        cout << "3. Delete Expression Tree\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    expressionTree.buildTreeFromPrefix(prefixExpression);
-    expressionTree.postOrderTraversal(expressionTree.root);
-    expressionTree.deleteTree(expressionTree.root);
+        switch(choice) {
+            case 1:
+                cout << "Enter Prefix Expression: ";
+                cin >> prefixExpression;
+                expressionTree.buildTreeFromPrefix(prefixExpression);
+                break;
+
+            case 2:
+                if (expressionTree.root == nullptr) {
+                    cout << "Tree is empty. Build the tree first.\n";
+                } else {
+                    expressionTree.postOrderTraversal(expressionTree.root);
+                }
+                break;
+
+            case 3:
+                if (expressionTree.root == nullptr) {
+                    cout << "Tree is empty. Nothing to delete.\n";
+                } else {
+                    expressionTree.deleteTree(expressionTree.root);
+                    expressionTree.root = nullptr;
+                }
+                break;
+
+            case 4:
+                cout << "Exiting program.\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 4);
 
     return 0;
 }
-
