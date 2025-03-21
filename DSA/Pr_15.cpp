@@ -16,7 +16,7 @@ int main() {
         cin >> cname[i];
     }
 
-    cout << "\nEnter the cost of roads between cities (-1 for no connection):\n";
+    cout << "\nEnter the cost of connection between cities (-1 for no connection):\n";
     for (int i = 0; i < n; i++) {
         for (int j = i + 1; j < n; j++) {
             cout << "Cost between " << cname[i] << " and " << cname[j] << ": ";
