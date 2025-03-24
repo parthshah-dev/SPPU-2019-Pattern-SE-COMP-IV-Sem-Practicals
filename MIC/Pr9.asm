@@ -2,7 +2,7 @@ section .data
 	srcblock db 12h, 45h, 87h, 24h, 97h
 	count equ 05
 	
-	msg db "ALP for nin overlapped block transfer using string instructions: ", 10
+	msg db "ALP for overlapped block transfer using string instructions: ", 10
 	msg_len equ $-msg
 	
 	msgsrc db 10, "The source block contains the elements: ", 10
