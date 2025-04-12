@@ -14,19 +14,54 @@ class Song:
     def __str__(self):
         return f"{self.id}. {self.title} by {self.artist} [MP3: {self.file_path}]"
 
-
 class PlaylistNode:
     def __init__(self, song: Song):
         self.song = song
         self.prev = None
         self.next = None
 
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        return None
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+    def peek(self):
+        if not self.is_empty():
+            return self.items[-1]
+        return None
+
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def enqueue(self, item):
+        self.items.append(item)
+
+    def dequeue(self):
+        if not self.is_empty():
+            return self.items.pop(0)
+        return None
+
+    def is_empty(self):
+        return len(self.items) == 0
 
 class PlaylistManager:
     def __init__(self):
         self.head = None
         self.tail = None
         self.current = None
+        self.history_stack = Stack()        
+        self.upcoming_queue = Queue()        
 
     def add_song(self, song: Song):
         new_node = PlaylistNode(song)
@@ -40,42 +75,61 @@ class PlaylistManager:
             self.current = self.head
         print(f"Song added: {song.title}")
 
+    def enqueue_song(self, song: Song):
+        self.upcoming_queue.enqueue(song)
+        print(f"'{song.title}' added to autoplay queue.")
+
     def play_current(self):
         if self.current:
             song = self.current.song
+            self.history_stack.push(song)  
             print(f"\nNow Playing: {song.title} by {song.artist}")
-            print(f"Playing file: {song.file_path}")
             try:
                 pygame.mixer.init(frequency=44100, size=-16, channels=2)
                 pygame.mixer.music.load(song.file_path)
                 pygame.mixer.music.play()
                 print("Playing... Press Ctrl+C to stop early.")
-                try:
-                    while pygame.mixer.music.get_busy():
-                        time.sleep(1)
-                except KeyboardInterrupt:
-                    pygame.mixer.music.stop()
-                    print("\nPlayback stopped by user.")
-            except pygame.error as e:
-                print(f"Error playing file: {e}")
+                while pygame.mixer.music.get_busy():
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                pygame.mixer.music.stop()
+                print("\nPlayback stopped by user.")
             except Exception as e:
-                print(f"An unexpected error occurred: {e}")
+                print(f"Error playing file: {e}")
         else:
             print("No song is currently selected.")
 
     def play_next(self):
-        if self.current and self.current.next:
-            self.current = self.current.next
-            self.play_current()
+        if self.upcoming_queue.is_empty():
+            if self.current and self.current.next:
+                self.current = self.current.next
+                self.play_current()
+            else:
+                print("No next song available.")
         else:
-            print("No next song available.")
+            next_song = self.upcoming_queue.dequeue()  
+            print(f"\nPlaying from autoplay queue: {next_song.title}")
+            self.history_stack.push(next_song)
+            self._play_song(next_song)
 
     def play_previous(self):
-        if self.current and self.current.prev:
-            self.current = self.current.prev
-            self.play_current()
+        if not self.history_stack.is_empty():
+            prev_song = self.history_stack.pop()  
+            print(f"\nPlaying from history: {prev_song.title}")
+            self._play_song(prev_song)
         else:
-            print("No previous song available.")
+            print("No previous song in history.")
+
+    def _play_song(self, song):
+        try:
+            pygame.mixer.init(frequency=44100, size=-16, channels=2)
+            pygame.mixer.music.load(song.file_path)
+            pygame.mixer.music.play()
+            print("Playing... Press Ctrl+C to stop early.")
+            while pygame.mixer.music.get_busy():
+                time.sleep(1)
+        except Exception as e:
+            print(f"Error playing file: {e}")
 
     def display_playlist(self):
         if not self.head:
@@ -88,7 +142,7 @@ class PlaylistManager:
             print(str(node.song) + marker)
             node = node.next
 
-
+# Main loop
 def main():
     playlist = PlaylistManager()
 
@@ -97,9 +151,10 @@ def main():
         print("1. Add Song Manually")
         print("2. Play Current Song")
         print("3. Play Next Song")
-        print("4. Play Previous Song")
+        print("4. Play Previous Song (From History)")
         print("5. Display Playlist")
-        print("6. Exit")
+        print("6. Enqueue Song (Add to Upcoming Queue)")
+        print("7. Exit")
 
         try:
             choice = int(input("Enter your choice: "))
@@ -132,6 +187,14 @@ def main():
             playlist.display_playlist()
 
         elif choice == 6:
+            song_id = int(input("Enter Song ID: "))
+            title = input("Enter Song Title: ")
+            artist = input("Enter Artist: ")
+            mp3_path = input("Enter MP3 file path: ")
+            new_song = Song(song_id, title, artist, mp3_path)
+            playlist.enqueue_song(new_song)
+
+        elif choice == 7:
             print("Exiting Music Player Manager.")
             break
 
